@@ -6,88 +6,110 @@
   <title>SARAL Chatbot</title>
 
   <style>
-    body { margin: 0; font-family: system-ui, Arial, sans-serif; background: #fafafa; }
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: #fafafa;
+    }
     header {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; border-bottom: 1px solid #eee; background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid #eee;
+      background: #fff;
     }
-    header h1 { font-size: 20px; color: #7a1814; margin: 0; font-weight: 600; }
+    header h1 {
+      font-size: 20px;
+      color: #7a1814;
+      margin: 0;
+      font-weight: 600;
+    }
 
-    /* Floating widget theming */
-    .rw-launcher { background-color: #f28c2f !important; } /* SARAL orange */
+    /* Floating chat theming */
+    .rw-launcher { background-color: #f28c2f !important; }
     .rw-conversation-container .rw-header {
-      background-color: #f28c2f !important; color: #fff !important;
+      background-color: #f28c2f !important;
+      color: #fff !important;
     }
-    .rw-message.rw-client { background-color: #7a1814 !important; color: #fff !important; } /* maroon */
-    .rw-message.rw-response { background-color: #f1f1f1 !important; color: #222 !important; }
-    .rw-conversation-container .rw-new-message { border-top: 1px solid #ddd !important; }
+    .rw-message.rw-client {
+      background-color: #7a1814 !important;
+      color: #fff !important;
+    }
+    .rw-message.rw-response {
+      background-color: #f1f1f1 !important;
+      color: #222 !important;
+    }
+    .rw-conversation-container .rw-new-message {
+      border-top: 1px solid #ddd !important;
+    }
   </style>
 
-  <!-- Rasa Webchat (bundles socket.io internally) -->
-  <script src="https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.min.js"></script>
+  <!-- Rasa Webchat stable build -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.min.js"
+    crossorigin="anonymous"
+  ></script>
 </head>
+
 <body>
   <header>
-    <!-- Inline SVG logo (no network request) -->
+    <!-- Inline SARAL mini logo -->
     <svg width="42" height="42" viewBox="0 0 128 128" aria-hidden="true">
       <rect width="128" height="128" fill="#f28c2f"></rect>
-      <text x="50%" y="58%" font-family="Arial, sans-serif" font-size="46" fill="#ffffff"
-            text-anchor="middle" dominant-baseline="middle">SARAL</text>
+      <text
+        x="50%" y="58%"
+        font-family="Arial, sans-serif"
+        font-size="46"
+        fill="#ffffff"
+        text-anchor="middle"
+        dominant-baseline="middle"
+      >S</text>
     </svg>
     <h1>SARAL Chatbot</h1>
   </header>
 
   <script>
-    // Build a small avatar as a data URL (no external fetch)
+    // Build inline avatar
     const avatarSvg =
       "<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'>" +
       "<rect width='128' height='128' fill='#f28c2f'/>" +
-      "<text x='50%' y='58%' font-family='Arial, sans-serif' font-size='40' fill='#ffffff' " +
-      "text-anchor='middle' dominant-baseline='middle'>SARAL</text></svg>";
-    const avatarDataUrl = "data:image/svg+xml;utf8," +
-      encodeURIComponent(avatarSvg)
-        // keep things readable/safe for some browsers
-        .replace(/%20/g, " ")
-        .replace(/%23/g, "%23")
-        .replace(/%0A/g, "");
+      "<text x='50%' y='58%' font-family='Arial,sans-serif' font-size='40' fill='#ffffff' text-anchor='middle' dominant-baseline='middle'>SARAL</text></svg>";
+    const avatarDataUrl = "data:image/svg+xml;utf8," + encodeURIComponent(avatarSvg);
+
+    const socketUrl  = "https://saral-chatbot-server.onrender.com";
+    const socketPath = "/socket.io/";
+
+    function initRasaChat() {
+      window.WebChat.default.init({
+        initPayload: "/greet",
+        socketUrl,
+        socketPath,
+        title: "SARAL Chatbot",
+        subtitle: "Ask about Haryana Government Services",
+        mainColor: "#f28c2f",
+        userBackgroundColor: "#7a1814",
+        userTextColor: "#ffffff",
+        profileAvatar: avatarDataUrl,
+        embedded: false,  // floating widget
+        showFullScreenButton: true,
+        params: { storage: "session" },
+      });
+      console.log("✅ Rasa Webchat initialized");
+    }
+
+    function waitForWebChat() {
+      if (window.WebChat?.default?.init) {
+        initRasaChat();
+      } else {
+        console.log("⏳ Waiting for rasa-webchat script...");
+        setTimeout(waitForWebChat, 400);
+      }
+    }
 
     window.addEventListener("load", () => {
-      const socketUrl  = "https://saral-chatbot-server.onrender.com";
-      const socketPath = "/socket.io/";
-
-      const start = () => {
-        window.WebChat.default.init({
-          initPayload: "/greet",
-          customData: { language: "en" },
-          socketUrl: socketUrl,
-          socketPath: socketPath,
-          title: "SARAL Chatbot",
-          subtitle: "Ask about Haryana Government Services",
-          profileAvatar: avatarDataUrl,  // inline avatar (no CORS)
-          showFullScreenButton: true,
-          showMessageDate: true,
-          mainColor: "#f28c2f",
-          userBackgroundColor: "#7a1814",
-          userTextColor: "#ffffff",
-          inputTextFieldHint: "Type your query here...",
-          params: { storage: "session" },
-          embedded: false  // floating widget
-        });
-        console.log("✅ Rasa Webchat initialized (inline assets, no ORB).");
-      };
-
-      // Wait until rasa-webchat script is fully ready
-      let tries = 0;
-      const timer = setInterval(() => {
-        tries++;
-        if (window.WebChat && window.WebChat.default && window.WebChat.default.init) {
-          clearInterval(timer);
-          start();
-        } else if (tries >= 30) { // ~6 seconds
-          clearInterval(timer);
-          console.error("❌ Rasa Webchat script did not load in time.");
-        }
-      }, 200);
+      console.log("🌐 Page loaded, waiting for rasa-webchat...");
+      waitForWebChat();
     });
   </script>
 </body>
