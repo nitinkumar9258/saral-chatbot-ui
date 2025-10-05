@@ -4,65 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SARAL Chatbot</title>
+
+  <!-- Minimal clean style -->
   <style>
     body {
       margin: 0;
       font-family: system-ui, Arial, sans-serif;
       background: #fafafa;
     }
+
     header {
       display: flex;
-      gap: 12px;
       align-items: center;
+      gap: 10px;
       padding: 10px 14px;
       border-bottom: 1px solid #eee;
       background: #fff;
     }
+
     header img {
-      height: 44px;
+      height: 42px;
     }
+
     header h1 {
       font-size: 20px;
-      color: #7a1814; /* maroon */
+      color: #7a1814;
       margin: 0;
       font-weight: 600;
     }
-    main {
-      height: calc(100vh - 70px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
+    /* Floating chat button position */
+    .rw-launcher {
+      background-color: #f28c2f !important; /* SARAL orange */
     }
-    #webchat {
-      width: 100%;
-      max-width: 420px;
-      height: 600px;
+
+    .rw-header {
+      background-color: #f28c2f !important;
+      color: #fff !important;
+    }
+
+    .rw-client {
+      background-color: #7a1814 !important; /* maroon bubbles */
+      color: #fff !important;
+    }
+
+    .rw-response {
+      background-color: #f1f1f1 !important;
+      color: #222 !important;
+    }
+
+    .rw-conversation-container .rw-new-message {
+      border-top: 1px solid #ddd !important;
     }
   </style>
-  <!-- Rasa Webchat JS -->
+
+  <!-- Rasa Webchat bundle -->
   <script src="https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.min.js"></script>
-  <!-- Socket.IO for Render server -->
+  <!-- Socket.IO -->
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
+
 <body>
   <header>
     <img src="https://saralharyana.gov.in/images/saral-logo.png" alt="SARAL Logo" />
     <h1>SARAL Chatbot</h1>
   </header>
 
-  <main>
-    <div id="webchat"></div>
-  </main>
-
   <script>
     window.onload = function () {
       const socketUrl = "https://saral-chatbot-server.onrender.com";
       const socketPath = "/socket.io/";
 
-      // Optional: confirm connection in browser console
+      // Confirm Socket.IO connection in console
       const testSocket = io(socketUrl, { transports: ["websocket"] });
-      testSocket.on("connect", () => console.log("✅ Connected to Rasa Socket.IO:", socketUrl));
-      testSocket.on("disconnect", () => console.log("⚠️ Disconnected from Rasa Socket.IO"));
+      testSocket.on("connect", () =>
+        console.log("✅ Connected to Rasa Socket.IO:", socketUrl)
+      );
+      testSocket.on("disconnect", () =>
+        console.log("⚠️ Disconnected from Rasa Socket.IO")
+      );
 
       window.WebChat.default.init({
         selector: "#webchat",
@@ -74,12 +94,13 @@
         subtitle: "Ask about Haryana Government Services",
         profileAvatar: "https://saralharyana.gov.in/images/saral-logo.png",
         showFullScreenButton: true,
-        params: { storage: "session" },
+        showMessageDate: true,
+        mainColor: "#f28c2f",
+        userBackgroundColor: "#7a1814",
+        userTextColor: "#ffffff",
         inputTextFieldHint: "Type your query here...",
-        mainColor: "#f28c2f", /* SARAL orange */
-        userBackgroundColor: "#7a1814", /* maroon bubble */
-        userTextColor: "#fff",
-        showCloseButton: true,
+        params: { storage: "session" },
+        embedded: false, // Floating widget mode
       });
     };
   </script>
