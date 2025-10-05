@@ -4,105 +4,84 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SARAL Chatbot</title>
-
   <style>
-    :root{
-      /* SARAL portal palette (maroon) */
-      --saral-maroon:#7b1f36;     /* primary topbar/buttons */
-      --saral-maroon-dark:#5a1528;/* hover/dark */
-      --saral-maroon-20:#fdeff3;  /* very light bg tint */
-      --bg:#faf7f8;
-      --text:#221f1f;
-      --muted:#6b6b6b;
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: #fafafa;
     }
-
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
-
-    /* Header strip similar to portal */
-    header{
-      display:flex;align-items:center;gap:12px;
-      background:var(--saral-maroon);
-      color:#fff;padding:10px 16px;
-      box-shadow:0 2px 6px rgba(0,0,0,.08)
+    header {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid #eee;
+      background: #fff;
     }
-    header img{height:38px}
-    header h1{margin:0;font-size:18px;font-weight:600;letter-spacing:.2px}
-
-    main{
-      padding:56px 16px;text-align:center;background:#fff;border-bottom:1px solid #ead7dd
+    header img {
+      height: 44px;
     }
-    main h2{margin:0 0 8px;color:var(--saral-maroon)}
-    main p{margin:6px auto;max-width:640px;line-height:1.6;color:var(--muted)}
-    code{background:var(--saral-maroon-20);color:var(--saral-maroon);padding:2px 6px;border-radius:4px}
-
-    footer{padding:16px;text-align:center;font-size:13px;color:#777;background:#fff}
-
-    /* rasa-webchat overrides to match SARAL maroon */
-    .rw-launcher{background:var(--saral-maroon) !important;}
-    .rw-launcher:hover{background:var(--saral-maroon-dark) !important;}
-    .rw-conversation-container .rw-header{
-      background:var(--saral-maroon) !important; border-bottom:2px solid #e9c0ca !important;
+    header h1 {
+      font-size: 20px;
+      color: #7a1814; /* maroon */
+      margin: 0;
+      font-weight: 600;
     }
-    .rw-client{background:var(--saral-maroon-20) !important;color:#141414 !important;}
-    .rw-response{background:var(--saral-maroon) !important;color:#fff !important;}
-    .rw-send{background:var(--saral-maroon) !important;}
+    main {
+      height: calc(100vh - 70px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #webchat {
+      width: 100%;
+      max-width: 420px;
+      height: 600px;
+    }
   </style>
+  <!-- Rasa Webchat JS -->
+  <script src="https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.min.js"></script>
+  <!-- Socket.IO for Render server -->
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
 <body>
   <header>
-    <img src="https://saralharyana.gov.in/images/saral_logo.png" alt="SARAL Logo"/>
-    <h1>SARAL Haryana Chatbot</h1>
+    <img src="https://saralharyana.gov.in/images/saral-logo.png" alt="SARAL Logo" />
+    <h1>SARAL Chatbot</h1>
   </header>
 
   <main>
-    <h2>Welcome to the SARAL Chatbot</h2>
-    <p>
-      Get information about Haryana Government services & certificates. Try
-      <code>resident certificate</code>, <code>income certificate</code>,
-      <code>electricity connection</code>.
-    </p>
+    <div id="webchat"></div>
   </main>
 
-  <footer>© Haryana – SARAL</footer>
-
   <script>
-    // load + auto-reload (your working pattern kept)
-    function loadChat(){
-      const old=document.getElementById("webchat"); if(old) old.remove();
-      const s=document.createElement("script");
-      s.src="https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.min.js";
-      s.async=true;
-      s.onload=()=>{ window.WebChat.default({
-          initPayload:"/greet",
-          customData:{ language:"en" },
-          socketUrl:"https://saral-chatbot-server.onrender.com",  // your Rasa server
-          socketPath:"/socket.io/",
-          title:"SARAL Chatbot",
-          subtitle:"",
-          showCloseButton:true,
-          showFullScreenButton:true,
-          params:{ storage:"none" },
-          inputTextFieldHint:"Type your query here…"
-        }, null);
-        setTimeout(watchMinimize, 800);
-      };
-      document.body.appendChild(s);
-    }
-    function watchMinimize(){
-      const panel=document.querySelector(".rw-conversation-container");
-      if(!panel) return setTimeout(watchMinimize,500);
-      let lastVisible=true;
-      new MutationObserver(()=> {
-        const visible=panel.style.display!=="none" && panel.offsetParent!==null;
-        if(lastVisible && !visible){
-          try{localStorage.clear();sessionStorage.clear();}catch(e){}
-          const old=document.getElementById("webchat"); if(old) old.remove();
-          loadChat();
-        }
-        lastVisible=visible;
-      }).observe(panel,{attributes:true,attributeFilter:["style"]});
-    }
-    loadChat();
+    window.onload = function () {
+      const socketUrl = "https://saral-chatbot-server.onrender.com";
+      const socketPath = "/socket.io/";
+
+      // Optional: confirm connection in browser console
+      const testSocket = io(socketUrl, { transports: ["websocket"] });
+      testSocket.on("connect", () => console.log("✅ Connected to Rasa Socket.IO:", socketUrl));
+      testSocket.on("disconnect", () => console.log("⚠️ Disconnected from Rasa Socket.IO"));
+
+      window.WebChat.default.init({
+        selector: "#webchat",
+        initPayload: "/greet",
+        customData: { language: "en" },
+        socketUrl: socketUrl,
+        socketPath: socketPath,
+        title: "SARAL Chatbot",
+        subtitle: "Ask about Haryana Government Services",
+        profileAvatar: "https://saralharyana.gov.in/images/saral-logo.png",
+        showFullScreenButton: true,
+        params: { storage: "session" },
+        inputTextFieldHint: "Type your query here...",
+        mainColor: "#f28c2f", /* SARAL orange */
+        userBackgroundColor: "#7a1814", /* maroon bubble */
+        userTextColor: "#fff",
+        showCloseButton: true,
+      });
+    };
   </script>
 </body>
 </html>
