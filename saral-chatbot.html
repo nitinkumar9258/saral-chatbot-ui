@@ -3,121 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SARAL Haryana Chatbot</title>
+  <title>SARAL Chatbot</title>
+
   <style>
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: #f4f6fc;
-      color: #333;
+    :root{
+      /* SARAL portal palette (maroon) */
+      --saral-maroon:#7b1f36;     /* primary topbar/buttons */
+      --saral-maroon-dark:#5a1528;/* hover/dark */
+      --saral-maroon-20:#fdeff3;  /* very light bg tint */
+      --bg:#faf7f8;
+      --text:#221f1f;
+      --muted:#6b6b6b;
     }
 
-    /* Header */
-    header {
-      background: #003399;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 18px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    header img {
-      height: 40px;
-    }
-    header h1 {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0;
-      letter-spacing: 0.3px;
-    }
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
 
-    /* Main intro */
-    main {
-      text-align: center;
-      padding: 60px 15px;
+    /* Header strip similar to portal */
+    header{
+      display:flex;align-items:center;gap:12px;
+      background:var(--saral-maroon);
+      color:#fff;padding:10px 16px;
+      box-shadow:0 2px 6px rgba(0,0,0,.08)
     }
-    main h2 {
-      color: #003399;
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    main p {
-      max-width: 600px;
-      margin: 8px auto;
-      line-height: 1.6;
-    }
-    main code {
-      background: #e6ecff;
-      padding: 3px 6px;
-      border-radius: 4px;
-      color: #003399;
-      font-weight: 600;
-    }
+    header img{height:38px}
+    header h1{margin:0;font-size:18px;font-weight:600;letter-spacing:.2px}
 
-    /* Footer */
-    footer {
-      background: #fff;
-      text-align: center;
-      padding: 12px;
-      border-top: 1px solid #ddd;
-      font-size: 13px;
-      color: #555;
+    main{
+      padding:56px 16px;text-align:center;background:#fff;border-bottom:1px solid #ead7dd
     }
+    main h2{margin:0 0 8px;color:var(--saral-maroon)}
+    main p{margin:6px auto;max-width:640px;line-height:1.6;color:var(--muted)}
+    code{background:var(--saral-maroon-20);color:var(--saral-maroon);padding:2px 6px;border-radius:4px}
 
-    /* Floating Chatbot icon adjustments */
-    .rw-launcher {
-      background-color: #003399 !important;
+    footer{padding:16px;text-align:center;font-size:13px;color:#777;background:#fff}
+
+    /* rasa-webchat overrides to match SARAL maroon */
+    .rw-launcher{background:var(--saral-maroon) !important;}
+    .rw-launcher:hover{background:var(--saral-maroon-dark) !important;}
+    .rw-conversation-container .rw-header{
+      background:var(--saral-maroon) !important; border-bottom:2px solid #e9c0ca !important;
     }
-    .rw-header {
-      background-color: #003399 !important;
-    }
-    .rw-client {
-      background-color: #e6ecff !important;
-    }
+    .rw-client{background:var(--saral-maroon-20) !important;color:#141414 !important;}
+    .rw-response{background:var(--saral-maroon) !important;color:#fff !important;}
+    .rw-send{background:var(--saral-maroon) !important;}
   </style>
 </head>
-
 <body>
   <header>
-    <div style="display:flex;align-items:center;gap:10px;">
-      <img src="https://saralharyana.gov.in/assets/img/logo.png" alt="SARAL Logo" />
-      <h1>SARAL Haryana Chatbot</h1>
-    </div>
+    <img src="https://saralharyana.gov.in/images/saral_logo.png" alt="SARAL Logo"/>
+    <h1>SARAL Haryana Chatbot</h1>
   </header>
 
   <main>
-    <h2>Welcome to the SARAL Chatbot 🤖</h2>
+    <h2>Welcome to the SARAL Chatbot</h2>
     <p>
-      Get instant information about <strong>Haryana Government services, certificates, and schemes</strong>.<br/>
-      Try typing <code>Resident Certificate</code> or <code>Electricity Connection</code>.
+      Get information about Haryana Government services & certificates. Try
+      <code>resident certificate</code>, <code>income certificate</code>,
+      <code>electricity connection</code>.
     </p>
-    <p><em>Powered by CRID & SeMT Haryana</em></p>
   </main>
 
-  <footer>
-    © 2025 Citizen Resources Information Department (CRID), Government of Haryana
-  </footer>
+  <footer>© Haryana – SARAL</footer>
 
   <script>
-    function loadChat() {
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.min.js";
-      script.async = true;
-      script.onload = () => {
-        window.WebChat.default({
-          initPayload: "/greet",
-          customData: { language: "en" },
-          socketUrl: "https://saral-chatbot-server.onrender.com", // update to your Rasa server
-          socketPath: "/socket.io/",
-          title: "SARAL Chatbot",
-          subtitle: "Your digital assistant",
-          mainColor: "#003399",
-          params: { storage: "none" },
-          showFullScreenButton: true
+    // load + auto-reload (your working pattern kept)
+    function loadChat(){
+      const old=document.getElementById("webchat"); if(old) old.remove();
+      const s=document.createElement("script");
+      s.src="https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.min.js";
+      s.async=true;
+      s.onload=()=>{ window.WebChat.default({
+          initPayload:"/greet",
+          customData:{ language:"en" },
+          socketUrl:"https://saral-chatbot-server.onrender.com",  // your Rasa server
+          socketPath:"/socket.io/",
+          title:"SARAL Chatbot",
+          subtitle:"",
+          showCloseButton:true,
+          showFullScreenButton:true,
+          params:{ storage:"none" },
+          inputTextFieldHint:"Type your query here…"
         }, null);
+        setTimeout(watchMinimize, 800);
       };
-      document.body.appendChild(script);
+      document.body.appendChild(s);
+    }
+    function watchMinimize(){
+      const panel=document.querySelector(".rw-conversation-container");
+      if(!panel) return setTimeout(watchMinimize,500);
+      let lastVisible=true;
+      new MutationObserver(()=> {
+        const visible=panel.style.display!=="none" && panel.offsetParent!==null;
+        if(lastVisible && !visible){
+          try{localStorage.clear();sessionStorage.clear();}catch(e){}
+          const old=document.getElementById("webchat"); if(old) old.remove();
+          loadChat();
+        }
+        lastVisible=visible;
+      }).observe(panel,{attributes:true,attributeFilter:["style"]});
     }
     loadChat();
   </script>
