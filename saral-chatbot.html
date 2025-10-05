@@ -4,30 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SARAL Haryana Chatbot</title>
-
-  <!-- Base theme styles -->
   <style>
     body {
       margin: 0;
-      font-family: "Roboto", "Open Sans", Arial, sans-serif;
-      background-color: #f7f7f7;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f6fc;
       color: #333;
     }
 
+    /* Header */
     header {
+      background: #003399;
+      color: #fff;
       display: flex;
       align-items: center;
-      gap: 12px;
-      background: linear-gradient(90deg, #cc0000 0%, #b00000 100%);
-      color: #fff;
-      padding: 10px 16px;
-      border-bottom: 3px solid #e6b800;
+      justify-content: space-between;
+      padding: 8px 18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-
     header img {
       height: 40px;
     }
-
     header h1 {
       font-size: 18px;
       font-weight: 600;
@@ -35,147 +32,93 @@
       letter-spacing: 0.3px;
     }
 
+    /* Main intro */
     main {
-      padding: 14px 16px;
       text-align: center;
-      background: #fff;
-      border-bottom: 1px solid #ddd;
+      padding: 60px 15px;
     }
-
     main h2 {
-      margin: 10px 0 4px;
-      color: #b00000;
+      color: #003399;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    main p {
+      max-width: 600px;
+      margin: 8px auto;
+      line-height: 1.6;
+    }
+    main code {
+      background: #e6ecff;
+      padding: 3px 6px;
+      border-radius: 4px;
+      color: #003399;
       font-weight: 600;
     }
 
-    main p {
-      color: #555;
-      font-size: 14px;
-    }
-
-    code {
-      background: #f0f0f0;
-      padding: 2px 4px;
-      border-radius: 4px;
-    }
-
-    /* --- Chat widget color overrides --- */
-    .rw-launcher {
-      background-color: #b00000 !important; /* SARAL red */
-    }
-
-    .rw-conversation-container .rw-header {
-      background-color: #b00000 !important;
-      color: #fff !important;
-      border-bottom: 2px solid #e6b800 !important;
-    }
-
-    .rw-conversation-container .rw-header .rw-title {
-      font-weight: 700;
-      color: #fff !important;
-    }
-
-    .rw-client {
-      background-color: #ffeaea !important;
-      color: #111 !important;
-    }
-
-    .rw-response {
-      background-color: #b00000 !important;
-      color: #fff !important;
-    }
-
-    .rw-send {
-      background-color: #b00000 !important;
-    }
-
+    /* Footer */
     footer {
+      background: #fff;
       text-align: center;
-      padding: 20px;
+      padding: 12px;
+      border-top: 1px solid #ddd;
       font-size: 13px;
-      color: #666;
-      background: #fafafa;
-      border-top: 1px solid #eee;
+      color: #555;
+    }
+
+    /* Floating Chatbot icon adjustments */
+    .rw-launcher {
+      background-color: #003399 !important;
+    }
+    .rw-header {
+      background-color: #003399 !important;
+    }
+    .rw-client {
+      background-color: #e6ecff !important;
     }
   </style>
 </head>
 
 <body>
   <header>
-    <img src="https://saralharyana.gov.in/images/saral_logo.png" alt="SARAL Logo" />
-    <h1>SARAL Haryana Chatbot</h1>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="https://saralharyana.gov.in/assets/img/logo.png" alt="SARAL Logo" />
+      <h1>SARAL Haryana Chatbot</h1>
+    </div>
   </header>
 
   <main>
-    <h2>Welcome to SARAL Chatbot 🤖</h2>
+    <h2>Welcome to the SARAL Chatbot 🤖</h2>
     <p>
-      Get instant help about Haryana Government services and certificates.<br/>
-      Try typing <code>resident certificate</code>, <code>income certificate</code>,
-      or <code>electricity connection</code>.
+      Get instant information about <strong>Haryana Government services, certificates, and schemes</strong>.<br/>
+      Try typing <code>Resident Certificate</code> or <code>Electricity Connection</code>.
     </p>
+    <p><em>Powered by CRID & SeMT Haryana</em></p>
   </main>
 
-  <div id="chat-holder"></div>
-
-  <footer>© 2025 Citizen Resources Information Department (CRID), Government of Haryana</footer>
+  <footer>
+    © 2025 Citizen Resources Information Department (CRID), Government of Haryana
+  </footer>
 
   <script>
-    // === Load and reload chat ===
     function loadChat() {
-      const old = document.getElementById("webchat");
-      if (old) old.remove();
-
       const script = document.createElement("script");
       script.src = "https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.min.js";
       script.async = true;
       script.onload = () => {
-        window.WebChat.default(
-          {
-            initPayload: "/greet",
-            customData: { language: "en" },
-            socketUrl: "https://saral-chatbot-server.onrender.com",
-            socketPath: "/socket.io/",
-            title: "SARAL Chatbot",
-            subtitle: "Ask about any Haryana Service",
-            showCloseButton: true,
-            showFullScreenButton: true,
-            params: { storage: "none" },
-            inputTextFieldHint: "Type your query here..."
-          },
-          null
-        );
-        console.log("✅ Chat widget loaded fresh");
-        setTimeout(watchMinimize, 800);
+        window.WebChat.default({
+          initPayload: "/greet",
+          customData: { language: "en" },
+          socketUrl: "https://saral-chatbot-server.onrender.com", // update to your Rasa server
+          socketPath: "/socket.io/",
+          title: "SARAL Chatbot",
+          subtitle: "Your digital assistant",
+          mainColor: "#003399",
+          params: { storage: "none" },
+          showFullScreenButton: true
+        }, null);
       };
       document.body.appendChild(script);
     }
-
-    // === Reload chat when minimized (clears state) ===
-    function watchMinimize() {
-      const launcher = document.querySelector(".rw-launcher");
-      const panel = document.querySelector(".rw-conversation-container");
-      if (!launcher || !panel) return setTimeout(watchMinimize, 500);
-
-      let lastVisible = true;
-
-      const observer = new MutationObserver(() => {
-        const isVisible = panel.style.display !== "none" && panel.offsetParent !== null;
-        if (lastVisible && !isVisible) {
-          console.log("🔄 Chat minimized — clearing and reloading");
-          try {
-            localStorage.clear();
-            sessionStorage.clear();
-          } catch (e) {}
-          const old = document.getElementById("webchat");
-          if (old) old.remove();
-          loadChat();
-        }
-        lastVisible = isVisible;
-      });
-
-      observer.observe(panel, { attributes: true, attributeFilter: ["style"] });
-    }
-
     loadChat();
   </script>
 </body>
