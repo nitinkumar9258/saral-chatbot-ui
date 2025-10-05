@@ -1,131 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SARAL Chatbot - Haryana</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SARAL Haryana Chatbot</title>
 
-    <!-- Rasa Webchat JS -->
-    <script src="https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.js"></script>
+  <!-- Base theme styles -->
+  <style>
+    body {
+      margin: 0;
+      font-family: "Roboto", "Open Sans", Arial, sans-serif;
+      background-color: #f7f7f7;
+      color: #333;
+    }
 
-    <style>
-      body {
-        background: linear-gradient(135deg, #f3f6ff, #ffffff);
-        font-family: "Segoe UI", Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-      }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(90deg, #cc0000 0%, #b00000 100%);
+      color: #fff;
+      padding: 10px 16px;
+      border-bottom: 3px solid #e6b800;
+    }
 
-      .header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        background-color: #002b7f; /* Deep blue CRID tone */
-        color: #fff;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      }
+    header img {
+      height: 40px;
+    }
 
-      .header img {
-        height: 48px;
-        margin-right: 15px;
-      }
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: 0.3px;
+    }
 
-      .header h1 {
-        font-size: 22px;
-        margin: 0;
-      }
+    main {
+      padding: 14px 16px;
+      text-align: center;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+    }
 
-      .info {
-        text-align: center;
-        padding: 40px 15px;
-      }
+    main h2 {
+      margin: 10px 0 4px;
+      color: #b00000;
+      font-weight: 600;
+    }
 
-      .info h2 {
-        color: #002b7f;
-        margin-bottom: 10px;
-      }
+    main p {
+      color: #555;
+      font-size: 14px;
+    }
 
-      .info p {
-        color: #555;
-        max-width: 600px;
-        margin: 0 auto 30px;
-      }
+    code {
+      background: #f0f0f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
 
-      footer {
-        text-align: center;
-        padding: 20px;
-        font-size: 14px;
-        background-color: #f8f9fa;
-        color: #666;
-        border-top: 1px solid #ddd;
-      }
+    /* --- Chat widget color overrides --- */
+    .rw-launcher {
+      background-color: #b00000 !important; /* SARAL red */
+    }
 
-      /* Custom Webchat Button Color */
-      .rw-launcher {
-        background-color: #002b7f !important;
-      }
+    .rw-conversation-container .rw-header {
+      background-color: #b00000 !important;
+      color: #fff !important;
+      border-bottom: 2px solid #e6b800 !important;
+    }
 
-      .rw-conversation-container .rw-header {
-        background-color: #002b7f !important;
-      }
+    .rw-conversation-container .rw-header .rw-title {
+      font-weight: 700;
+      color: #fff !important;
+    }
 
-      .rw-conversation-container .rw-header .rw-title {
-        font-weight: bold;
-        color: white !important;
-      }
+    .rw-client {
+      background-color: #ffeaea !important;
+      color: #111 !important;
+    }
 
-      .rw-conversation-container .rw-messages-container {
-        background-color: #f5f7fb !important;
-      }
+    .rw-response {
+      background-color: #b00000 !important;
+      color: #fff !important;
+    }
 
-      .rw-client {
-        background-color: #eaf1ff !important;
-        color: #000 !important;
-      }
+    .rw-send {
+      background-color: #b00000 !important;
+    }
 
-      .rw-response {
-        background-color: #002b7f !important;
-        color: white !important;
-      }
-    </style>
-  </head>
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 13px;
+      color: #666;
+      background: #fafafa;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
 
-  <body>
-    <div class="header">
-      <img src="https://saralharyana.gov.in/images/saral_logo.png" alt="SARAL Logo" />
-      <h1>SARAL Haryana Chatbot</h1>
-    </div>
+<body>
+  <header>
+    <img src="https://saralharyana.gov.in/images/saral_logo.png" alt="SARAL Logo" />
+    <h1>SARAL Haryana Chatbot</h1>
+  </header>
 
-    <div class="info">
-      <h2>Welcome to the SARAL Chatbot 🤖</h2>
-      <p>
-        Get information about Haryana Government services, certificates, and schemes.
-        Ask anything like <b>"Resident Certificate"</b> or <b>"Electricity Connection"</b>.
-      </p>
-      <p><i>Powered by CRID & SeMT Haryana</i></p>
-    </div>
+  <main>
+    <h2>Welcome to SARAL Chatbot 🤖</h2>
+    <p>
+      Get instant help about Haryana Government services and certificates.<br/>
+      Try typing <code>resident certificate</code>, <code>income certificate</code>,
+      or <code>electricity connection</code>.
+    </p>
+  </main>
 
-    <footer>© 2025 Citizen Resources Information Department (CRID), Government of Haryana</footer>
+  <div id="chat-holder"></div>
 
-    <script>
-      WebChat.default(
-        {
-          initPayload: "/greet",
-          socketUrl: "https://saral-chatbot-server.onrender.com", // Your Rasa Chatbot Server URL
-          socketPath: "/socket.io/",
-          title: "SARAL Chatbot",
-          subtitle: "Ask about any Haryana Service",
-          inputTextFieldHint: "Type your query here...",
-          params: { storage: "session" },
-          profileAvatar: "https://saralharyana.gov.in/images/saral_logo.png",
-          showFullScreenButton: true,
-          showCloseButton: true,
-          customData: { language: "en" },
-        },
-        null
-      );
-    </script>
-  </body>
+  <footer>© 2025 Citizen Resources Information Department (CRID), Government of Haryana</footer>
+
+  <script>
+    // === Load and reload chat ===
+    function loadChat() {
+      const old = document.getElementById("webchat");
+      if (old) old.remove();
+
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.min.js";
+      script.async = true;
+      script.onload = () => {
+        window.WebChat.default(
+          {
+            initPayload: "/greet",
+            customData: { language: "en" },
+            socketUrl: "https://saral-chatbot-server.onrender.com",
+            socketPath: "/socket.io/",
+            title: "SARAL Chatbot",
+            subtitle: "Ask about any Haryana Service",
+            showCloseButton: true,
+            showFullScreenButton: true,
+            params: { storage: "none" },
+            inputTextFieldHint: "Type your query here..."
+          },
+          null
+        );
+        console.log("✅ Chat widget loaded fresh");
+        setTimeout(watchMinimize, 800);
+      };
+      document.body.appendChild(script);
+    }
+
+    // === Reload chat when minimized (clears state) ===
+    function watchMinimize() {
+      const launcher = document.querySelector(".rw-launcher");
+      const panel = document.querySelector(".rw-conversation-container");
+      if (!launcher || !panel) return setTimeout(watchMinimize, 500);
+
+      let lastVisible = true;
+
+      const observer = new MutationObserver(() => {
+        const isVisible = panel.style.display !== "none" && panel.offsetParent !== null;
+        if (lastVisible && !isVisible) {
+          console.log("🔄 Chat minimized — clearing and reloading");
+          try {
+            localStorage.clear();
+            sessionStorage.clear();
+          } catch (e) {}
+          const old = document.getElementById("webchat");
+          if (old) old.remove();
+          loadChat();
+        }
+        lastVisible = isVisible;
+      });
+
+      observer.observe(panel, { attributes: true, attributeFilter: ["style"] });
+    }
+
+    loadChat();
+  </script>
+</body>
 </html>
