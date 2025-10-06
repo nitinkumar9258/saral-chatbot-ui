@@ -45,7 +45,7 @@
     }
   </style>
 
-  <!-- Rasa Webchat stable build -->
+  <!-- Load Rasa Webchat script -->
   <script
     src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.min.js"
     crossorigin="anonymous"
@@ -70,18 +70,19 @@
   </header>
 
   <script>
-    // Build inline avatar
     const avatarSvg =
       "<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'>" +
       "<rect width='128' height='128' fill='#f28c2f'/>" +
       "<text x='50%' y='58%' font-family='Arial,sans-serif' font-size='40' fill='#ffffff' text-anchor='middle' dominant-baseline='middle'>SARAL</text></svg>";
     const avatarDataUrl = "data:image/svg+xml;utf8," + encodeURIComponent(avatarSvg);
 
-    const socketUrl  = "https://saral-chatbot-server.onrender.com";
+    // ✅ Use secure WebSocket URL
+    const socketUrl  = "wss://saral-chatbot-server.onrender.com";
     const socketPath = "/socket.io/";
 
     function initRasaChat() {
-      window.WebChat.default.init({
+      // ✅ Use WebChat.default directly
+      window.WebChat.default({
         initPayload: "/greet",
         socketUrl,
         socketPath,
@@ -91,7 +92,7 @@
         userBackgroundColor: "#7a1814",
         userTextColor: "#ffffff",
         profileAvatar: avatarDataUrl,
-        embedded: false,  // floating widget
+        embedded: false,
         showFullScreenButton: true,
         params: { storage: "session" },
       });
@@ -99,7 +100,7 @@
     }
 
     function waitForWebChat() {
-      if (window.WebChat?.default?.init) {
+      if (window.WebChat?.default) {
         initRasaChat();
       } else {
         console.log("⏳ Waiting for rasa-webchat script...");
